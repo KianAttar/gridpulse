@@ -42,18 +42,13 @@ Electricity Maps REST  ─┘
 
 ```bash
 pnpm install
+cp .env.example .env.local  # then fill in your Electricity Maps API key
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-The Electricity Maps key is configured via `.env.local`:
-
-```
-ELECTRICITY_MAPS_API_KEY=your_key_here
-```
-
-Open-Meteo requires no key.
+Get a free Electricity Maps API key at https://www.electricitymaps.com/free-tier-api. Open-Meteo requires no key.
 
 ## Design system
 
