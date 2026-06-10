@@ -1,0 +1,52 @@
+type ComputeNode {
+  id: ID!
+  name: String!
+  powerDraw: Float!
+  status: NodeStatus!
+  zone: ZoneId!
+}
+
+type EnergyForecast {
+  generatedAt: String!
+  points: [ForecastPoint!]!
+}
+
+type ForecastPoint {
+  solarRadiation: Float!
+  time: String!
+  windSpeed: Float!
+}
+
+type GridZone {
+  carbonIntensity: Float!
+  id: ZoneId!
+  isEstimated: Boolean!
+  name: String!
+  updatedAt: String!
+}
+
+enum NodeStatus {
+  IDLE
+  OFFLINE
+  ONLINE
+}
+
+type Query {
+  energyForecast(zone: ZoneId!): EnergyForecast!
+  gridZones: [GridZone!]!
+  nodes: [ComputeNode!]!
+  routeWorkload: WorkloadRecommendation!
+}
+
+type WorkloadRecommendation {
+  node: ComputeNode!
+  reason: String!
+  zone: GridZone!
+}
+
+enum ZoneId {
+  CA_BC
+  CA_ON
+  DE
+  US_TEX_ERCO
+}

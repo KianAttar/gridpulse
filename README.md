@@ -50,6 +50,16 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Get a free Electricity Maps API key at https://www.electricitymaps.com/free-tier-api. Open-Meteo requires no key.
 
+### Regenerating GraphQL types
+
+Run this whenever the schema changes (requires the dev server to be running):
+
+```bash
+pnpm codegen
+```
+
+Generated files live in `graphql/__generated__/` and are committed to the repo. For IDE autocomplete and validation install the **GraphQL: Language Feature Support** extension in VS Code.
+
 ## Design system
 
 Dark mode only. Design tokens are extracted verbatim from the live clod.io app — same CSS variables, same Geist font, same border radius scale, same component patterns.
