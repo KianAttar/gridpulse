@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Menu, RefreshCw } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNodes } from "@/hooks/useNodes";
 import { useGridZones } from "@/hooks/useGridZones";
 import { useDashboardStore } from "@/store/dashboardStore";
@@ -79,9 +79,8 @@ export default function Dashboard() {
               )}
               <span className="text-[11px] text-muted-foreground">zones poll every 60s</span>
             </div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
+            <Tooltip>
+              <TooltipTrigger asChild>
                   <span tabIndex={0} className="inline-flex">
                     <button
                       onClick={handleRefresh}
@@ -94,16 +93,15 @@ export default function Dashboard() {
                       <RefreshCw size={15} className={isRefreshing ? 'animate-spin' : ''} />
                     </button>
                   </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {isRefreshing
-                    ? 'Refreshing…'
-                    : !canRefresh
-                    ? 'Just refreshed — available again in ~15s'
-                    : 'Refresh zone data'}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+              </TooltipTrigger>
+              <TooltipContent>
+                {isRefreshing
+                  ? 'Refreshing…'
+                  : !canRefresh
+                  ? 'Just refreshed — available again in ~15s'
+                  : 'Refresh zone data'}
+              </TooltipContent>
+            </Tooltip>
           </div>
         </header>
 
