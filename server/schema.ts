@@ -42,6 +42,8 @@ export const typeDefs = `#graphql
   type WorkloadRecommendation {
     node: ComputeNode!
     zone: GridZone!
+    score: Float!
+    rank: Int!
     reason: String!
   }
 
@@ -49,6 +51,6 @@ export const typeDefs = `#graphql
     nodes: [ComputeNode!]!
     gridZones: [GridZone!]!
     energyForecast(zone: ZoneId!): EnergyForecast!
-    routeWorkload: WorkloadRecommendation!
+    routeWorkload(k: Int! = 3, zones: [ZoneId!]): [WorkloadRecommendation!]!
   }
 `;

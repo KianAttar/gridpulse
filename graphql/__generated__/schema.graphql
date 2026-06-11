@@ -35,12 +35,14 @@ type Query {
   energyForecast(zone: ZoneId!): EnergyForecast!
   gridZones: [GridZone!]!
   nodes: [ComputeNode!]!
-  routeWorkload: WorkloadRecommendation!
+  routeWorkload(k: Int! = 3, zones: [ZoneId!]): [WorkloadRecommendation!]!
 }
 
 type WorkloadRecommendation {
   node: ComputeNode!
+  rank: Int!
   reason: String!
+  score: Float!
   zone: GridZone!
 }
 

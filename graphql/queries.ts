@@ -38,8 +38,11 @@ export const GET_ENERGY_FORECAST = graphql(`
 `)
 
 export const ROUTE_WORKLOAD = graphql(`
-  query RouteWorkload {
-    routeWorkload {
+  query RouteWorkload($k: Int! = 3, $zones: [ZoneId!]) {
+    routeWorkload(k: $k, zones: $zones) {
+      rank
+      score
+      reason
       node {
         id
         name
@@ -52,7 +55,6 @@ export const ROUTE_WORKLOAD = graphql(`
         name
         carbonIntensity
       }
-      reason
     }
   }
 `)
