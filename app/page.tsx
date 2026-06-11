@@ -9,6 +9,7 @@ import { NodeCard } from '@/components/NodeCard'
 import { ForecastChart } from '@/components/ForecastChart'
 import { RouteWorkloadPanel } from '@/components/RouteWorkloadPanel'
 import { Sidebar } from '@/components/Sidebar'
+import { NodeDrawer } from '@/components/NodeDrawer'
 
 export default function Dashboard() {
   const { nodes, loading: nodesLoading } = useNodes()
@@ -24,6 +25,7 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
+      <NodeDrawer />
 
       <div className="flex flex-1 flex-col overflow-auto">
         {/* Header */}
