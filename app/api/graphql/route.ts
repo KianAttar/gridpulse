@@ -3,6 +3,9 @@ import { typeDefs } from '@/server/schema'
 import { resolvers, type Context } from '@/server/resolvers'
 import { ElectricityMapsAPI } from '@/server/datasources/ElectricityMapsAPI'
 import { OpenMeteoAPI } from '@/server/datasources/OpenMeteoAPI'
+import { startSimulation } from '@/server/simulation'
+
+startSimulation()
 
 const server = new ApolloServer<Context>({ typeDefs, resolvers })
 const serverStart = server.start()
