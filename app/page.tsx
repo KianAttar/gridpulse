@@ -2,53 +2,104 @@
 
 import { useNodes } from '@/hooks/useNodes'
 import { useGridZones } from '@/hooks/useGridZones'
-import { useEnergyForecast } from '@/hooks/useEnergyForecast'
-import { useRouteWorkload } from '@/hooks/useRouteWorkload'
-import { useEffect } from 'react'
+import { useDashboardStore } from '@/store/dashboardStore'
+import { ZONE_NAMES } from '@/types'
+import { ZoneCard } from '@/components/ZoneCard'
+import { NodeCard } from '@/components/NodeCard'
+import { ForecastChart } from '@/components/ForecastChart'
+import { RouteWorkloadPanel } from '@/components/RouteWorkloadPanel'
+import { Sidebar } from '@/components/Sidebar'
 
-function DataProbe() {
+export default function Dashboard() {
   const { nodes, loading: nodesLoading } = useNodes()
   const { zones, loading: zonesLoading } = useGridZones()
-  const { forecast, loading: forecastLoading } = useEnergyForecast('DE')
-  const { route, recommendation, loading: routeLoading } = useRouteWorkload()
+  const { activeZoneFilter, setActiveZoneFilter, selectedNodeId, setSelectedNodeId } = useDashboardStore()
 
-  useEffect(() => {
-    if (!nodesLoading) console.log('[GridPulse] nodes:', nodes)
-  }, [nodes, nodesLoading])
+  const filteredNodes = activeZoneFilter
+    ? nodes.filter(n => n.zone === activeZoneFilter)
+    : nodes
 
-  useEffect(() => {
-    if (!zonesLoading) console.log('[GridPulse] zones:', zones)
-  }, [zones, zonesLoading])
-
-  useEffect(() => {
-    if (!forecastLoading) console.log('[GridPulse] forecast (DE):', forecast)
-  }, [forecast, forecastLoading])
-
-  useEffect(() => {
-    if (!routeLoading && recommendation) console.log('[GridPulse] recommendation:', recommendation)
-  }, [recommendation, routeLoading])
+  const forecastZone = activeZoneFilter ?? 'DE'
 
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <div className="space-y-4 p-8 text-sm font-mono text-foreground/60">
-        <p className="text-foreground text-xl font-semibold">GridPulse</p>
-        <p>nodes: {nodesLoading ? 'loading…' : nodes.length}</p>
-        <p>zones: {zonesLoading ? 'loading…' : zones.length}</p>
-        <p>forecast points (DE): {forecastLoading ? 'loading…' : (forecast?.points.length ?? 'null')}</p>
-        <button
-          className="mt-4 rounded-md border border-foreground/20 px-4 py-2 text-foreground hover:border-foreground/60 transition-colors"
-          onClick={() => route()}
-        >
-          Route workload
-        </button>
-        {recommendation && (
-          <p className="max-w-sm text-foreground/80">{recommendation.reason}</p>
-        )}
+    <div className="flex h-screen overflow-hidden">
+      <Sidebar />
+
+      <div className="flex flex-1 flex-col overflow-auto">
+        {/* Header */}
+        <header className="flex h-14 items-center justify-between border-b border-border px-6">
+          <div>
+            <span className="text-sm font-semibold text-foreground">Dashboard</span>
+            {activeZoneFilter && (
+              <span className="ml-2 text-sm text-muted-foreground">
+                · {ZONE_NAMES[activeZoneFilter]}
+              </span>
+            )}
+          </div>
+          <span className="text-xs text-muted-foreground">Zones poll every 60s</span>
+        </header>
+
+        <main className="flex-1 space-y-6 p-6">
+          {/* Zone cards */}
+          <section>
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Grid Zones
+            </h2>
+            {zonesLoading ? (
+              <div className="grid grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="h-24 rounded-lg border border-border bg-card animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 gap-4">
+                {zones.map(zone => (
+                  <ZoneCard
+                    key={zone.id}
+                    {...zone}
+                    isActive={activeZoneFilter === zone.id}
+                    onClick={() => setActiveZoneFilter(activeZoneFilter === zone.id ? null : zone.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Node grid */}
+          <section>
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Compute Nodes
+              {activeZoneFilter && (
+                <span className="ml-1 normal-case font-normal">· {ZONE_NAMES[activeZoneFilter]}</span>
+              )}
+            </h2>
+            {nodesLoading ? (
+              <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="h-20 rounded-lg border border-border bg-card animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
+                {filteredNodes.map(node => (
+                  <NodeCard
+                    key={node.id}
+                    {...node}
+                    isSelected={selectedNodeId === node.id}
+                    onClick={() => setSelectedNodeId(selectedNodeId === node.id ? null : node.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Forecast + routing */}
+          <div className="grid grid-cols-2 gap-6">
+            <ForecastChart zone={forecastZone} />
+            <RouteWorkloadPanel />
+          </div>
+        </main>
       </div>
     </div>
   )
-}
-
-export default function Home() {
-  return <DataProbe />
 }
