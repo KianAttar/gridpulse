@@ -26,9 +26,10 @@ const ZONE_SHORT: Record<ZoneId, string> = {
 interface ForecastChartProps {
   zone: ZoneId
   compareByDefault?: boolean
+  hideCompare?: boolean
 }
 
-export function ForecastChart({ zone, compareByDefault = false }: ForecastChartProps) {
+export function ForecastChart({ zone, compareByDefault = false, hideCompare = false }: ForecastChartProps) {
   const [selectedZone, setSelectedZone] = useState<ZoneId>(zone)
   const [tab, setTab] = useState<'forecast' | 'compare'>(compareByDefault ? 'compare' : 'forecast')
 
@@ -37,6 +38,11 @@ export function ForecastChart({ zone, compareByDefault = false }: ForecastChartP
     setTab(compareByDefault ? 'compare' : 'forecast')
     if (!compareByDefault) setSelectedZone(zone)
   }, [compareByDefault, zone])
+
+  // When hideCompare, always track the locked zone
+  useEffect(() => {
+    if (hideCompare) setSelectedZone(zone)
+  }, [hideCompare, zone])
 
   const { forecast, loading } = useEnergyForecast(selectedZone)
 
@@ -70,42 +76,46 @@ export function ForecastChart({ zone, compareByDefault = false }: ForecastChartP
           <p className="text-sm font-medium text-foreground">Energy Forecast</p>
           <p className="text-xs text-muted-foreground">next 24h</p>
         </div>
-        <div className="flex shrink-0 gap-0.5 rounded-md bg-muted p-0.5">
-          {(['forecast', 'compare'] as const).map(t => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`rounded px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer whitespace-nowrap
-                ${tab === t
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-                }`}
-            >
-              {t === 'forecast' ? 'Single Zone' : 'All Zones'}
-            </button>
-          ))}
-        </div>
+        {!hideCompare && (
+          <div className="flex shrink-0 gap-0.5 rounded-md bg-muted p-0.5">
+            {(['forecast', 'compare'] as const).map(t => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`rounded px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer whitespace-nowrap
+                  ${tab === t
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                  }`}
+              >
+                {t === 'forecast' ? 'Single Zone' : 'All Zones'}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {tab === 'forecast' && (
         <>
-          {/* Zone selector */}
-          <div className="flex items-center gap-1 flex-wrap">
-            {ZONE_IDS.map(id => (
-              <button
-                key={id}
-                onClick={() => setSelectedZone(id)}
-                className={`rounded px-2 py-0.5 text-[11px] font-medium transition-colors cursor-pointer
-                  ${selectedZone === id
-                    ? 'bg-primary/15 text-primary'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }`}
-              >
-                {ZONE_SHORT[id]}
-              </button>
-            ))}
-            <span className="text-xs text-muted-foreground ml-1">{ZONE_NAMES[selectedZone]}</span>
-          </div>
+          {/* Zone selector — hidden when locked to a node's zone */}
+          {!hideCompare && (
+            <div className="flex items-center gap-1 flex-wrap">
+              {ZONE_IDS.map(id => (
+                <button
+                  key={id}
+                  onClick={() => setSelectedZone(id)}
+                  className={`rounded px-2 py-0.5 text-[11px] font-medium transition-colors cursor-pointer
+                    ${selectedZone === id
+                      ? 'bg-primary/15 text-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    }`}
+                >
+                  {ZONE_SHORT[id]}
+                </button>
+              ))}
+              <span className="text-xs text-muted-foreground ml-1">{ZONE_NAMES[selectedZone]}</span>
+            </div>
+          )}
 
           {/* Summary stats */}
           {loading && !forecast && (

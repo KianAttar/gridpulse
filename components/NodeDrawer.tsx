@@ -141,7 +141,7 @@ export function NodeDrawer() {
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                   Energy Forecast
                 </p>
-                <ForecastChart zone={node.zone} />
+                <ForecastChart zone={node.zone} hideCompare />
               </section>
 
             </div>

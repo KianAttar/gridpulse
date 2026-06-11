@@ -29,12 +29,11 @@ const ZONE_COLOR: Record<ZoneId, string> = {
   US_TEX_ERCO: '#60a5fa',
 }
 
-type Metric = 'solar' | 'wind' | 'cloud'
+type Metric = 'solar' | 'wind'
 
 const METRICS: { key: Metric; label: string; unit: string }[] = [
   { key: 'solar', label: 'Solar',  unit: 'W/m²' },
   { key: 'wind',  label: 'Wind',   unit: 'm/s'  },
-  { key: 'cloud', label: 'Cloud',  unit: '%'    },
 ]
 
 export function ZoneComparisonChart() {
@@ -64,8 +63,7 @@ export function ZoneComparisonChart() {
         if (!pt) continue
         row[ZONE_SHORT[id]] =
           metric === 'solar' ? Math.round(pt.solarRadiation)
-          : metric === 'wind'  ? Math.round(pt.windSpeed * 10) / 10
-          :                      Math.round(pt.cloudCover)
+          :                    Math.round(pt.windSpeed * 10) / 10
       }
       return row
     })
