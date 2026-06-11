@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, memo } from 'react'
 import { useEnergyForecast } from '@/hooks/useEnergyForecast'
 import { ZONE_IDS, ZONE_NAMES } from '@/types'
 import type { ZoneId } from '@/types'
@@ -29,7 +29,7 @@ interface ForecastChartProps {
   hideCompare?: boolean
 }
 
-export function ForecastChart({ zone, compareByDefault = false, hideCompare = false }: ForecastChartProps) {
+export const ForecastChart = memo(function ForecastChart({ zone, compareByDefault = false, hideCompare = false }: ForecastChartProps) {
   const [selectedZone, setSelectedZone] = useState<ZoneId>(zone)
   const [tab, setTab] = useState<'forecast' | 'compare'>(compareByDefault ? 'compare' : 'forecast')
 
@@ -226,4 +226,4 @@ export function ForecastChart({ zone, compareByDefault = false, hideCompare = fa
       {tab === 'compare' && <ZoneComparisonChart />}
     </div>
   )
-}
+})
