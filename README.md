@@ -1,6 +1,6 @@
 # GridPulse
 
-A real-time compute & energy intelligence dashboard built to demonstrate energy-aware compute routing — the core pattern behind [CLoD](https://clod.io) (LōD Technologies).
+A real-time compute & energy intelligence dashboard for energy-aware compute routing.
 
 ## What it does
 
@@ -8,7 +8,7 @@ GridPulse reads live carbon intensity data across four grid zones (BC, Ontario, 
 
 ## Why it exists
 
-LōD Technologies' CLoD platform is currently all REST. This project demonstrates the exact architecture they're building next: a GraphQL layer wrapping external REST APIs, with Apollo Client managing server state and Zustand managing UI state.
+Built to explore what a GraphQL layer over external REST APIs looks like in practice — Apollo Client managing server state, Zustand managing UI state.
 
 ## Architecture
 
@@ -29,7 +29,7 @@ Electricity Maps REST  ─┘
 |-------|-----------|
 | Framework | Next.js 16 (App Router, Turbopack) |
 | Language | TypeScript (strict) |
-| Styling | Tailwind CSS v4 + clod.io design tokens |
+| Styling | Tailwind CSS v4 |
 | Components | shadcn/ui + Radix UI primitives |
 | Icons | Lucide React |
 | Charts | Recharts |
@@ -62,4 +62,4 @@ Generated files live in `graphql/__generated__/` and are committed to the repo. 
 
 ## Design system
 
-Dark mode only. Design tokens are extracted verbatim from the live clod.io app — same CSS variables, same Geist font, same border radius scale, same component patterns.
+Dark mode only. Uses Geist font, CSS custom properties for theming, and shadcn/ui component patterns.
