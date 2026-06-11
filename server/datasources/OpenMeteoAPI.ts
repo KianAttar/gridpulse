@@ -1,4 +1,5 @@
 import { type ZoneId, type EnergyForecast } from '@/types'
+import { MemCache } from '@/server/memCache'
 
 const ZONE_COORDINATES: Record<ZoneId, { lat: number; lon: number }> = {
   CA_BC:       { lat: 49.2827, lon: -123.1207 },
@@ -7,10 +8,16 @@ const ZONE_COORDINATES: Record<ZoneId, { lat: number; lon: number }> = {
   US_TEX_ERCO: { lat: 32.4487, lon: -99.7331  },
 }
 
+// Module-level so it survives across per-request class instantiations
+const cache = new MemCache<ZoneId, EnergyForecast>(10 * 60_000)
+
 export class OpenMeteoAPI {
   private baseUrl = 'https://api.open-meteo.com/v1'
 
   async getForecast(zone: ZoneId): Promise<EnergyForecast> {
+    const cached = cache.get(zone)
+    if (cached) return cached
+
     const { lat, lon } = ZONE_COORDINATES[zone]
 
     const params = new URLSearchParams({
@@ -39,9 +46,11 @@ export class OpenMeteoAPI {
       .filter(p => new Date(p.time).getTime() >= now)
       .slice(0, 24)
 
-    return {
+    const forecast: EnergyForecast = {
       generatedAt: new Date().toISOString(),
       points,
     }
+    cache.set(zone, forecast)
+    return forecast
   }
 }
