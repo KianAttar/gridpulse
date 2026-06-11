@@ -39,7 +39,7 @@ export function RouteWorkloadPanel() {
                     <span className="text-sm font-medium text-foreground">{rec.node.name}</span>
                   </div>
                   <span className="font-mono text-xs text-muted-foreground">
-                    score {rec.score}
+                    cost {rec.cost}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-muted-foreground pl-8">

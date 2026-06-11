@@ -41,7 +41,7 @@ export const ROUTE_WORKLOAD = graphql(`
   query RouteWorkload($k: Int! = 3, $zones: [ZoneId!]) {
     routeWorkload(k: $k, zones: $zones) {
       rank
-      score
+      cost
       reason
       node {
         id

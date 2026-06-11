@@ -39,10 +39,10 @@ type Query {
 }
 
 type WorkloadRecommendation {
+  cost: Float!
   node: ComputeNode!
   rank: Int!
   reason: String!
-  score: Float!
   zone: GridZone!
 }
 

@@ -42,7 +42,7 @@ export const typeDefs = `#graphql
   type WorkloadRecommendation {
     node: ComputeNode!
     zone: GridZone!
-    score: Float!
+    cost: Float!
     rank: Int!
     reason: String!
   }

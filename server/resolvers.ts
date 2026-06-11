@@ -14,7 +14,7 @@ const MAX_POWER_W = 600
 interface ScoredNode {
   node: ComputeNode
   zone: GridZone
-  score: number
+  cost: number
 }
 
 function scoreNode(node: ComputeNode, zone: GridZone): number {
@@ -23,12 +23,12 @@ function scoreNode(node: ComputeNode, zone: GridZone): number {
   return zone.carbonIntensity + statusPenalty + utilizationPenalty
 }
 
-function buildReason(node: ComputeNode, zone: GridZone, score: number): string {
+function buildReason(node: ComputeNode, zone: GridZone, cost: number): string {
   const parts = [`${zone.name} · ${zone.carbonIntensity} gCO₂/kWh`]
   if (node.status === 'IDLE') parts.push('idle node (+15 spin-up)')
   const util = Math.round((node.powerDraw / MAX_POWER_W) * 100)
   if (util > 50) parts.push(`${util}% utilization`)
-  parts.push(`score ${Math.round(score * 10) / 10}`)
+  parts.push(`cost ${Math.round(cost * 10) / 10}`)
   return parts.join(' · ')
 }
 
@@ -70,17 +70,17 @@ export const resolvers = {
       const scored: ScoredNode[] = available.map(node => ({
         node,
         zone: zoneMap.get(node.zone)!,
-        score: scoreNode(node, zoneMap.get(node.zone)!),
+        cost: scoreNode(node, zoneMap.get(node.zone)!),
       }))
 
-      scored.sort((a, b) => a.score - b.score)
+      scored.sort((a, b) => a.cost - b.cost)
 
-      return scored.slice(0, args.k).map(({ node, zone, score }, i) => ({
+      return scored.slice(0, args.k).map(({ node, zone, cost }, i) => ({
         node,
         zone,
-        score: Math.round(score * 10) / 10,
+        cost: Math.round(cost * 10) / 10,
         rank: i + 1,
-        reason: buildReason(node, zone, score),
+        reason: buildReason(node, zone, cost),
       }))
     },
   },
