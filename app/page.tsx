@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Menu, RefreshCw } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNodes } from "@/hooks/useNodes";
 import { useGridZones } from "@/hooks/useGridZones";
 import { useDashboardStore } from "@/store/dashboardStore";
@@ -15,13 +16,16 @@ import { NodeDrawer } from "@/components/NodeDrawer";
 
 export default function Dashboard() {
   const [canRefresh, setCanRefresh] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const { nodes, loading: nodesLoading } = useNodes();
   const { zones, loading: zonesLoading, lastUpdatedAt, refetch } = useGridZones();
 
   async function handleRefresh() {
     if (!canRefresh || zonesLoading) return;
     setCanRefresh(false);
+    setIsRefreshing(true);
     await refetch();
+    setIsRefreshing(false);
     setTimeout(() => setCanRefresh(true), 15_000);
   }
   const {
@@ -70,25 +74,36 @@ export default function Dashboard() {
             <div className="flex flex-col items-end gap-0.5">
               {lastUpdatedAt && (
                 <span className="text-xs text-foreground/70">
-                  Updated {lastUpdatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                  Updated {lastUpdatedAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' })}
                 </span>
               )}
               <span className="text-[11px] text-muted-foreground">zones poll every 60s</span>
             </div>
-            <button
-              onClick={handleRefresh}
-              disabled={!canRefresh || zonesLoading}
-              title="Refresh zone data"
-              className="rounded-md p-1.5 text-muted-foreground transition-colors cursor-pointer
-                hover:bg-muted hover:text-foreground
-                disabled:opacity-40 disabled:cursor-not-allowed"
-              aria-label="Refresh"
-            >
-              <RefreshCw
-                size={15}
-                className={(!canRefresh || zonesLoading) ? 'animate-spin' : ''}
-              />
-            </button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span tabIndex={0} className="inline-flex">
+                    <button
+                      onClick={handleRefresh}
+                      disabled={!canRefresh || zonesLoading}
+                      className="rounded-md p-1.5 text-muted-foreground transition-colors cursor-pointer
+                        hover:bg-muted hover:text-foreground
+                        disabled:opacity-40 disabled:cursor-not-allowed"
+                      aria-label="Refresh"
+                    >
+                      <RefreshCw size={15} className={isRefreshing ? 'animate-spin' : ''} />
+                    </button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {isRefreshing
+                    ? 'Refreshing…'
+                    : !canRefresh
+                    ? 'Just refreshed — available again in ~15s'
+                    : 'Refresh zone data'}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </header>
 
