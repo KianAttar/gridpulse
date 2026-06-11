@@ -2,7 +2,11 @@
 
 import { useState, useCallback } from "react";
 import { Menu, RefreshCw } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useNodes } from "@/hooks/useNodes";
 import { useGridZones } from "@/hooks/useGridZones";
 import { useDashboardStore } from "@/store/dashboardStore";
@@ -17,9 +21,9 @@ const ForecastChart = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="rounded-lg border border-border bg-card p-4 h-80 animate-pulse" />
+      <div className="rounded-lg border border-border bg-card p-4 min-h-64 animate-pulse" />
     ),
-  }
+  },
 );
 import { Sidebar } from "@/components/Sidebar";
 import { NodeDrawer } from "@/components/NodeDrawer";
@@ -28,7 +32,12 @@ export default function Dashboard() {
   const [canRefresh, setCanRefresh] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { nodes, loading: nodesLoading, refetch: refetchNodes } = useNodes();
-  const { zones, loading: zonesLoading, lastUpdatedAt, refetch: refetchZones } = useGridZones();
+  const {
+    zones,
+    loading: zonesLoading,
+    lastUpdatedAt,
+    refetch: refetchZones,
+  } = useGridZones();
 
   async function handleRefresh() {
     if (!canRefresh || zonesLoading) return;
@@ -46,13 +55,19 @@ export default function Dashboard() {
     setSidebarOpen,
   } = useDashboardStore();
 
-  const handleZoneClick = useCallback((id: string) => {
-    setActiveZoneFilter(activeZoneFilter === id ? null : id as ZoneId)
-  }, [activeZoneFilter, setActiveZoneFilter])
+  const handleZoneClick = useCallback(
+    (id: string) => {
+      setActiveZoneFilter(activeZoneFilter === id ? null : (id as ZoneId));
+    },
+    [activeZoneFilter, setActiveZoneFilter],
+  );
 
-  const handleNodeClick = useCallback((id: string) => {
-    setSelectedNodeId(selectedNodeId === id ? null : id)
-  }, [selectedNodeId, setSelectedNodeId])
+  const handleNodeClick = useCallback(
+    (id: string) => {
+      setSelectedNodeId(selectedNodeId === id ? null : id);
+    },
+    [selectedNodeId, setSelectedNodeId],
+  );
 
   const filteredNodes = activeZoneFilter
     ? nodes.filter((n) => n.zone === activeZoneFilter)
@@ -92,32 +107,42 @@ export default function Dashboard() {
             <div className="flex flex-col items-end gap-0.5">
               {lastUpdatedAt && (
                 <span className="text-xs text-foreground/70">
-                  Updated {lastUpdatedAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' })}
+                  Updated{" "}
+                  {lastUpdatedAt.toLocaleTimeString([], {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })}
                 </span>
               )}
-              <span className="text-[11px] text-muted-foreground">zones poll every 60s</span>
+              <span className="text-[11px] text-muted-foreground">
+                zones poll every 60s
+              </span>
             </div>
             <Tooltip>
               <TooltipTrigger asChild>
-                  <span tabIndex={0} className="inline-flex">
-                    <button
-                      onClick={handleRefresh}
-                      disabled={!canRefresh || zonesLoading}
-                      className="rounded-md p-1.5 text-muted-foreground transition-colors cursor-pointer
+                <span tabIndex={0} className="inline-flex">
+                  <button
+                    onClick={handleRefresh}
+                    disabled={!canRefresh || zonesLoading}
+                    className="rounded-md p-1.5 text-muted-foreground transition-colors cursor-pointer
                         hover:bg-muted hover:text-foreground
                         disabled:opacity-40 disabled:cursor-not-allowed"
-                      aria-label="Refresh"
-                    >
-                      <RefreshCw size={15} className={isRefreshing ? 'animate-spin' : ''} />
-                    </button>
-                  </span>
+                    aria-label="Refresh"
+                  >
+                    <RefreshCw
+                      size={15}
+                      className={isRefreshing ? "animate-spin" : ""}
+                    />
+                  </button>
+                </span>
               </TooltipTrigger>
               <TooltipContent>
                 {isRefreshing
-                  ? 'Refreshing…'
+                  ? "Refreshing…"
                   : !canRefresh
-                  ? 'Just refreshed — available again in ~15s'
-                  : 'Refresh zone data'}
+                    ? "Just refreshed — available again in ~15s"
+                    : "Refresh zone data"}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -132,9 +157,12 @@ export default function Dashboard() {
             {zonesLoading ? (
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="flex flex-col gap-2 rounded-lg border border-border bg-card p-3 sm:p-4 animate-pulse">
+                  <div
+                    key={i}
+                    className="flex flex-col gap-1.5 sm:gap-2 rounded-lg border border-border bg-card p-3 sm:p-4 animate-pulse"
+                  >
                     <div className="h-3.5 w-2/3 rounded bg-muted" />
-                    <div className="h-7 w-1/2 rounded bg-muted" />
+                    <div className="h-7 sm:h-8 w-1/2 rounded bg-muted" />
                     <div className="flex items-center gap-1.5">
                       <div className="h-1.5 w-1.5 rounded-full bg-muted" />
                       <div className="h-3 w-10 rounded bg-muted" />
@@ -169,14 +197,17 @@ export default function Dashboard() {
             {nodesLoading ? (
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="flex flex-col gap-2 sm:gap-3 rounded-lg border border-border bg-card p-3 sm:p-4 animate-pulse">
+                  <div
+                    key={i}
+                    className="flex flex-col gap-2 sm:gap-3 rounded-lg border border-border bg-card p-3 sm:p-4 animate-pulse"
+                  >
                     <div className="flex items-center justify-between">
-                      <div className="h-4 w-14 rounded bg-muted" />
+                      <div className="h-6 w-14 rounded bg-muted" />
                       <div className="h-5 w-16 rounded-full bg-muted" />
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="h-3 w-24 rounded bg-muted" />
-                      <div className="h-3 w-12 rounded bg-muted" />
+                      <div className="h-4 w-24 rounded bg-muted" />
+                      <div className="h-4 w-12 rounded bg-muted" />
                     </div>
                   </div>
                 ))}
@@ -197,7 +228,10 @@ export default function Dashboard() {
 
           {/* Forecast + routing */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <ForecastChart zone={forecastZone} compareByDefault={activeZoneFilter === null} />
+            <ForecastChart
+              zone={forecastZone}
+              compareByDefault={activeZoneFilter === null}
+            />
             <RouteWorkloadPanel />
           </div>
         </main>

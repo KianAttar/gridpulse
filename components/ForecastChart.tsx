@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useState, useMemo, useEffect, memo } from 'react'
-import { useEnergyForecast } from '@/hooks/useEnergyForecast'
-import { ZONE_IDS, ZONE_NAMES } from '@/types'
-import type { ZoneId } from '@/types'
-import { ZoneComparisonChart } from './ZoneComparisonChart'
+import { useState, useMemo, useEffect, memo } from "react";
+import { useEnergyForecast } from "@/hooks/useEnergyForecast";
+import { ZONE_IDS, ZONE_NAMES } from "@/types";
+import type { ZoneId } from "@/types";
+import { ZoneComparisonChart } from "./ZoneComparisonChart";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -14,62 +14,76 @@ import {
   Tooltip,
   Legend,
   CartesianGrid,
-} from 'recharts'
+} from "recharts";
 
 const ZONE_SHORT: Record<ZoneId, string> = {
-  CA_BC:       'BC',
-  CA_ON:       'ON',
-  DE:          'DE',
-  US_TEX_ERCO: 'TX',
-}
+  CA_BC: "BC",
+  CA_ON: "ON",
+  DE: "DE",
+  US_TEX_ERCO: "TX",
+};
 
 interface ForecastChartProps {
-  zone: ZoneId
-  compareByDefault?: boolean
-  hideCompare?: boolean
+  zone: ZoneId;
+  compareByDefault?: boolean;
+  hideCompare?: boolean;
 }
 
-export const ForecastChart = memo(function ForecastChart({ zone, compareByDefault = false, hideCompare = false }: ForecastChartProps) {
-  const [selectedZone, setSelectedZone] = useState<ZoneId>(zone)
-  const [tab, setTab] = useState<'forecast' | 'compare'>(compareByDefault ? 'compare' : 'forecast')
+export const ForecastChart = memo(function ForecastChart({
+  zone,
+  compareByDefault = false,
+  hideCompare = false,
+}: ForecastChartProps) {
+  const [selectedZone, setSelectedZone] = useState<ZoneId>(zone);
+  const [tab, setTab] = useState<"forecast" | "compare">(
+    compareByDefault ? "compare" : "forecast",
+  );
 
   // Sync tab and zone when parent switches between all-zones and a specific zone
   useEffect(() => {
-    setTab(compareByDefault ? 'compare' : 'forecast')
-    if (!compareByDefault) setSelectedZone(zone)
-  }, [compareByDefault, zone])
+    setTab(compareByDefault ? "compare" : "forecast");
+    if (!compareByDefault) setSelectedZone(zone);
+  }, [compareByDefault, zone]);
 
   // When hideCompare, always track the locked zone
   useEffect(() => {
-    if (hideCompare) setSelectedZone(zone)
-  }, [hideCompare, zone])
+    if (hideCompare) setSelectedZone(zone);
+  }, [hideCompare, zone]);
 
-  const { forecast, loading } = useEnergyForecast(selectedZone)
+  const { forecast, loading } = useEnergyForecast(selectedZone);
 
   const stats = useMemo(() => {
-    if (!forecast?.points.length) return null
-    const pts = forecast.points
-    const peak = pts.reduce((m, p) => p.solarRadiation > m.solarRadiation ? p : m, pts[0])
+    if (!forecast?.points.length) return null;
+    const pts = forecast.points;
+    const peak = pts.reduce(
+      (m, p) => (p.solarRadiation > m.solarRadiation ? p : m),
+      pts[0],
+    );
     return {
       peakSolar: Math.round(peak.solarRadiation),
-      peakAt:    peak.time.slice(11, 16),
-      avgWind:   Math.round(pts.reduce((s, p) => s + p.windSpeed, 0) / pts.length * 10) / 10,
-      avgCloud:  Math.round(pts.reduce((s, p) => s + p.cloudCover, 0) / pts.length),
-      tempNow:   Math.round(pts[0].temperature),
-    }
-  }, [forecast])
+      peakAt: peak.time.slice(11, 16),
+      avgWind:
+        Math.round(
+          (pts.reduce((s, p) => s + p.windSpeed, 0) / pts.length) * 10,
+        ) / 10,
+      avgCloud: Math.round(
+        pts.reduce((s, p) => s + p.cloudCover, 0) / pts.length,
+      ),
+      tempNow: Math.round(pts[0].temperature),
+    };
+  }, [forecast]);
 
   const chartData = useMemo(() => {
-    if (!forecast) return []
-    return forecast.points.map(p => ({
-      time:  p.time.slice(11, 16),
+    if (!forecast) return [];
+    return forecast.points.map((p) => ({
+      time: p.time.slice(11, 16),
       solar: Math.round(p.solarRadiation),
-      wind:  Math.round(p.windSpeed * 10) / 10,
-    }))
-  }, [forecast])
+      wind: Math.round(p.windSpeed * 10) / 10,
+    }));
+  }, [forecast]);
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4 flex flex-col gap-4">
+    <div className="rounded-lg border border-border bg-card p-4 flex flex-col gap-4 min-h-64">
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
         <div>
@@ -78,42 +92,46 @@ export const ForecastChart = memo(function ForecastChart({ zone, compareByDefaul
         </div>
         {!hideCompare && (
           <div className="flex shrink-0 gap-0.5 rounded-md bg-muted p-0.5">
-            {(['forecast', 'compare'] as const).map(t => (
+            {(["forecast", "compare"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
                 className={`rounded px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer whitespace-nowrap
-                  ${tab === t
-                    ? 'bg-card text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
+                  ${
+                    tab === t
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
               >
-                {t === 'forecast' ? 'Single Zone' : 'All Zones'}
+                {t === "forecast" ? "Single Zone" : "All Zones"}
               </button>
             ))}
           </div>
         )}
       </div>
 
-      {tab === 'forecast' && (
+      {tab === "forecast" && (
         <>
           {/* Zone selector — hidden when locked to a node's zone */}
           {!hideCompare && (
             <div className="flex items-center gap-1 flex-wrap">
-              {ZONE_IDS.map(id => (
+              {ZONE_IDS.map((id) => (
                 <button
                   key={id}
                   onClick={() => setSelectedZone(id)}
                   className={`rounded px-2 py-0.5 text-[11px] font-medium transition-colors cursor-pointer
-                    ${selectedZone === id
-                      ? 'bg-primary/15 text-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    ${
+                      selectedZone === id
+                        ? "bg-primary/15 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
                     }`}
                 >
                   {ZONE_SHORT[id]}
                 </button>
               ))}
-              <span className="text-xs text-muted-foreground ml-1">{ZONE_NAMES[selectedZone]}</span>
+              <span className="text-xs text-muted-foreground ml-1">
+                {ZONE_NAMES[selectedZone]}
+              </span>
             </div>
           )}
 
@@ -121,7 +139,10 @@ export const ForecastChart = memo(function ForecastChart({ zone, compareByDefaul
           {loading && !forecast && (
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 animate-pulse">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="rounded-md bg-muted/40 px-2.5 py-2 flex flex-col gap-1.5">
+                <div
+                  key={i}
+                  className="rounded-md bg-muted/40 px-2.5 py-2 flex flex-col gap-1.5"
+                >
                   <div className="h-2.5 w-16 rounded bg-muted" />
                   <div className="h-4 w-12 rounded bg-muted" />
                 </div>
@@ -131,19 +152,48 @@ export const ForecastChart = memo(function ForecastChart({ zone, compareByDefaul
           {stats && (
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {[
-                { label: 'Peak Solar', value: stats.peakSolar, unit: 'W/m²', sub: `at ${stats.peakAt}` },
-                { label: 'Avg Wind',   value: stats.avgWind,   unit: 'm/s',   sub: null },
-                { label: 'Cloud Cover',value: stats.avgCloud,  unit: '%',     sub: '24h avg' },
-                { label: 'Temp Now',   value: stats.tempNow,   unit: '°C',    sub: null },
-              ].map(s => (
-                <div key={s.label} className="rounded-md bg-muted/40 px-2.5 py-2">
-                  <p className="text-[10px] text-muted-foreground leading-none mb-1.5">{s.label}</p>
+                {
+                  label: "Peak Solar",
+                  value: stats.peakSolar,
+                  unit: "W/m²",
+                  sub: `at ${stats.peakAt}`,
+                },
+                {
+                  label: "Avg Wind",
+                  value: stats.avgWind,
+                  unit: "m/s",
+                  sub: null,
+                },
+                {
+                  label: "Cloud Cover",
+                  value: stats.avgCloud,
+                  unit: "%",
+                  sub: "24h avg",
+                },
+                {
+                  label: "Temp Now",
+                  value: stats.tempNow,
+                  unit: "°C",
+                  sub: null,
+                },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className="rounded-md bg-muted/40 px-2.5 py-2"
+                >
+                  <p className="text-[10px] text-muted-foreground leading-none mb-1.5">
+                    {s.label}
+                  </p>
                   <p className="font-mono text-sm font-semibold text-foreground leading-none">
                     {s.value}
-                    <span className="text-[10px] font-normal text-muted-foreground ml-0.5">{s.unit}</span>
+                    <span className="text-[10px] font-normal text-muted-foreground ml-0.5">
+                      {s.unit}
+                    </span>
                   </p>
                   {s.sub && (
-                    <p className="text-[10px] text-muted-foreground mt-1 leading-none">{s.sub}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1 leading-none">
+                      {s.sub}
+                    </p>
                   )}
                 </div>
               ))}
@@ -155,11 +205,17 @@ export const ForecastChart = memo(function ForecastChart({ zone, compareByDefaul
             <div className="h-40 rounded-lg bg-muted/40 animate-pulse" />
           ) : (
             <ResponsiveContainer width="100%" height={160}>
-              <ComposedChart data={chartData} margin={{ top: 4, right: 12, bottom: 0, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <ComposedChart
+                data={chartData}
+                margin={{ top: 4, right: 12, bottom: 0, left: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="rgba(255,255,255,0.05)"
+                />
                 <XAxis
                   dataKey="time"
-                  tick={{ fill: '#a1a1a1', fontSize: 11 }}
+                  tick={{ fill: "#a1a1a1", fontSize: 11 }}
                   tickLine={false}
                   axisLine={false}
                   interval={5}
@@ -167,7 +223,7 @@ export const ForecastChart = memo(function ForecastChart({ zone, compareByDefaul
                 <YAxis
                   yAxisId="solar"
                   orientation="left"
-                  tick={{ fill: '#a1a1a1', fontSize: 11 }}
+                  tick={{ fill: "#a1a1a1", fontSize: 11 }}
                   tickLine={false}
                   axisLine={false}
                   width={40}
@@ -176,7 +232,7 @@ export const ForecastChart = memo(function ForecastChart({ zone, compareByDefaul
                 <YAxis
                   yAxisId="wind"
                   orientation="right"
-                  tick={{ fill: '#a1a1a1', fontSize: 11 }}
+                  tick={{ fill: "#a1a1a1", fontSize: 11 }}
                   tickLine={false}
                   axisLine={false}
                   width={40}
@@ -184,18 +240,22 @@ export const ForecastChart = memo(function ForecastChart({ zone, compareByDefaul
                 />
                 <Tooltip
                   contentStyle={{
-                    background: '#171717',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: "#171717",
+                    border: "1px solid rgba(255,255,255,0.1)",
                     borderRadius: 8,
                     fontSize: 12,
-                    color: '#fafafa',
+                    color: "#fafafa",
                   }}
-                  labelStyle={{ color: '#a1a1a1', marginBottom: 4 }}
+                  labelStyle={{ color: "#a1a1a1", marginBottom: 4 }}
                 />
                 <Legend
                   iconType="circle"
                   iconSize={7}
-                  wrapperStyle={{ fontSize: 11, color: '#a1a1a1', paddingTop: 8 }}
+                  wrapperStyle={{
+                    fontSize: 11,
+                    color: "#a1a1a1",
+                    paddingTop: 8,
+                  }}
                 />
                 <Line
                   yAxisId="solar"
@@ -205,7 +265,7 @@ export const ForecastChart = memo(function ForecastChart({ zone, compareByDefaul
                   stroke="#f99c00"
                   strokeWidth={2}
                   dot={false}
-                  activeDot={{ r: 3, fill: '#f99c00' }}
+                  activeDot={{ r: 3, fill: "#f99c00" }}
                 />
                 <Line
                   yAxisId="wind"
@@ -215,7 +275,7 @@ export const ForecastChart = memo(function ForecastChart({ zone, compareByDefaul
                   stroke="#1447e6"
                   strokeWidth={2}
                   dot={false}
-                  activeDot={{ r: 3, fill: '#1447e6' }}
+                  activeDot={{ r: 3, fill: "#1447e6" }}
                 />
               </ComposedChart>
             </ResponsiveContainer>
@@ -223,7 +283,7 @@ export const ForecastChart = memo(function ForecastChart({ zone, compareByDefaul
         </>
       )}
 
-      {tab === 'compare' && <ZoneComparisonChart />}
+      {tab === "compare" && <ZoneComparisonChart />}
     </div>
-  )
-})
+  );
+});
