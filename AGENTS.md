@@ -14,14 +14,14 @@ Kian Attar — full-stack engineer (React/TypeScript/Node.js). He wants to under
 
 ## What we're building
 
-**GridPulse** — a real-time compute & energy intelligence dashboard. It demonstrates the GraphQL-over-REST architecture that LōD Technologies (clod.io) needs to build next. This is a portfolio/interview project.
+**GridPulse** — a real-time compute & energy intelligence dashboard. It demonstrates a GraphQL-over-REST architecture: resolvers wrap external REST APIs, Apollo Client manages server state, Zustand manages UI state. This is a portfolio/interview project.
 
 See `BUSINESS_DOMAIN.md` for the domain explanation (carbon intensity, energy-aware routing, what the APIs actually mean).
 See `PLAN.md` for the 7-stage build plan.
 
 ## Current state
 
-- Stage 1 (Scaffold) is complete: Next.js 16, Tailwind v4, all deps installed, clod.io design tokens applied, dark mode locked, git initialized.
+- Stage 1 (Scaffold) is complete: Next.js 16, Tailwind v4, all deps installed, design tokens applied, dark mode locked, git initialized.
 - Stage 2 is next: GraphQL schema + TypeScript types.
 
 ## Architecture rules — never violate these
@@ -35,7 +35,7 @@ See `PLAN.md` for the 7-stage build plan.
 
 - Next.js 16, App Router, Turbopack
 - TypeScript strict mode
-- Tailwind CSS v4 with exact clod.io design tokens (see `app/globals.css`)
+- Tailwind CSS v4 with custom design tokens (see `app/globals.css`)
 - shadcn/ui + Radix UI primitives
 - Lucide React icons
 - Recharts for all charts
@@ -45,7 +45,7 @@ See `PLAN.md` for the 7-stage build plan.
 
 ## Design system
 
-All design tokens are extracted from the live clod.io app and live in `app/globals.css`. Dark mode only (`class="dark"` on `<html>`). Geist font (sans + mono). Brand: amber/orange primary (`#ffb974`), secondary orange (`#fa9816`). Don't invent new colors — use the CSS variables.
+Design tokens live in `app/globals.css`. Dark mode only (`class="dark"` on `<html>`). Geist font (sans + mono). Brand: amber/orange primary (`#ffb974`), secondary orange (`#fa9816`). Don't invent new colors — use the CSS variables.
 
 ## How Kian wants to work
 
@@ -63,7 +63,7 @@ All design tokens are extracted from the live clod.io app and live in `app/globa
 
 ## Key interview talking points (don't lose sight of these)
 
-1. "CLoD is currently all REST. GridPulse demonstrates the GraphQL layer they're building next — resolvers wrap the REST calls, Apollo cache owns the client state."
+1. "GridPulse demonstrates a GraphQL layer over REST — resolvers wrap the external REST calls, Apollo cache owns the client state."
 2. "Apollo cache = server state. Zustand = UI state. They're not interchangeable."
 3. "React.memo on NodeCard because nodes update independently — prevents cascade re-renders."
 4. "The GraphQL schema is the contract. Frontend describes what it needs; resolvers handle the REST plumbing."
