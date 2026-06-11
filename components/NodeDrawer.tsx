@@ -5,7 +5,17 @@ import { useNodes } from '@/hooks/useNodes'
 import { useGridZones } from '@/hooks/useGridZones'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { ZONE_NAMES } from '@/types'
-import { ForecastChart } from './ForecastChart'
+import dynamic from 'next/dynamic'
+
+const ForecastChart = dynamic(
+  () => import('./ForecastChart').then((m) => m.ForecastChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="rounded-lg border border-border bg-card h-70 animate-pulse" />
+    ),
+  }
+)
 
 const MAX_POWER_W = 600
 

@@ -7,10 +7,20 @@ import { useNodes } from "@/hooks/useNodes";
 import { useGridZones } from "@/hooks/useGridZones";
 import { useDashboardStore } from "@/store/dashboardStore";
 import { ZONE_NAMES, type ZoneId } from "@/types";
+import dynamic from "next/dynamic";
 import { ZoneCard } from "@/components/ZoneCard";
 import { NodeCard } from "@/components/NodeCard";
-import { ForecastChart } from "@/components/ForecastChart";
 import { RouteWorkloadPanel } from "@/components/RouteWorkloadPanel";
+
+const ForecastChart = dynamic(
+  () => import("@/components/ForecastChart").then((m) => m.ForecastChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="rounded-lg border border-border bg-card p-4 h-80 animate-pulse" />
+    ),
+  }
+);
 import { Sidebar } from "@/components/Sidebar";
 import { NodeDrawer } from "@/components/NodeDrawer";
 
