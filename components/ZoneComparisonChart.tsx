@@ -74,11 +74,7 @@ export function ZoneComparisonChart() {
   const unit = METRICS.find(m => m.key === metric)!.unit
 
   if (!refF) {
-    return (
-      <div className="flex h-48 items-center justify-center text-xs text-muted-foreground">
-        Loading all zones…
-      </div>
-    )
+    return <div className="h-56 rounded-lg bg-muted/40 animate-pulse" />
   }
 
   return (

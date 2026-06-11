@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { Menu, RefreshCw } from "lucide-react";
 import { useNodes } from "@/hooks/useNodes";
 import { useGridZones } from "@/hooks/useGridZones";
 import { useDashboardStore } from "@/store/dashboardStore";
@@ -12,8 +14,16 @@ import { Sidebar } from "@/components/Sidebar";
 import { NodeDrawer } from "@/components/NodeDrawer";
 
 export default function Dashboard() {
+  const [canRefresh, setCanRefresh] = useState(true);
   const { nodes, loading: nodesLoading } = useNodes();
-  const { zones, loading: zonesLoading } = useGridZones();
+  const { zones, loading: zonesLoading, lastUpdatedAt, refetch } = useGridZones();
+
+  async function handleRefresh() {
+    if (!canRefresh || zonesLoading) return;
+    setCanRefresh(false);
+    await refetch();
+    setTimeout(() => setCanRefresh(true), 15_000);
+  }
   const {
     activeZoneFilter,
     setActiveZoneFilter,
@@ -43,9 +53,7 @@ export default function Dashboard() {
               className="lg:hidden rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
               aria-label="Open menu"
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+              <Menu size={18} />
             </button>
             <div>
               <span className="text-sm font-semibold text-foreground">
@@ -58,9 +66,30 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-          <span className="hidden sm:block text-xs text-muted-foreground">
-            Zones poll every 60s
-          </span>
+          <div className="hidden sm:flex items-center gap-2">
+            <div className="flex flex-col items-end gap-0.5">
+              {lastUpdatedAt && (
+                <span className="text-xs text-foreground/70">
+                  Updated {lastUpdatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                </span>
+              )}
+              <span className="text-[11px] text-muted-foreground">zones poll every 60s</span>
+            </div>
+            <button
+              onClick={handleRefresh}
+              disabled={!canRefresh || zonesLoading}
+              title="Refresh zone data"
+              className="rounded-md p-1.5 text-muted-foreground transition-colors cursor-pointer
+                hover:bg-muted hover:text-foreground
+                disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Refresh"
+            >
+              <RefreshCw
+                size={15}
+                className={(!canRefresh || zonesLoading) ? 'animate-spin' : ''}
+              />
+            </button>
+          </div>
         </header>
 
         <main className="flex-1 space-y-6 p-4 sm:p-6">
@@ -72,10 +101,14 @@ export default function Dashboard() {
             {zonesLoading ? (
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-24 rounded-lg border border-border bg-card animate-pulse"
-                  />
+                  <div key={i} className="flex flex-col gap-2 rounded-lg border border-border bg-card p-3 sm:p-4 animate-pulse">
+                    <div className="h-3.5 w-2/3 rounded bg-muted" />
+                    <div className="h-7 w-1/2 rounded bg-muted" />
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-1.5 w-1.5 rounded-full bg-muted" />
+                      <div className="h-3 w-10 rounded bg-muted" />
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -108,11 +141,17 @@ export default function Dashboard() {
             </h2>
             {nodesLoading ? (
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-20 rounded-lg border border-border bg-card animate-pulse"
-                  />
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="flex flex-col gap-2 sm:gap-3 rounded-lg border border-border bg-card p-3 sm:p-4 animate-pulse">
+                    <div className="flex items-center justify-between">
+                      <div className="h-4 w-14 rounded bg-muted" />
+                      <div className="h-5 w-16 rounded-full bg-muted" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="h-3 w-24 rounded bg-muted" />
+                      <div className="h-3 w-12 rounded bg-muted" />
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : (

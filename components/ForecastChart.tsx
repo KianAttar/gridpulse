@@ -108,6 +108,16 @@ export function ForecastChart({ zone, compareByDefault = false }: ForecastChartP
           </div>
 
           {/* Summary stats */}
+          {loading && !forecast && (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 animate-pulse">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-md bg-muted/40 px-2.5 py-2 flex flex-col gap-1.5">
+                  <div className="h-2.5 w-16 rounded bg-muted" />
+                  <div className="h-4 w-12 rounded bg-muted" />
+                </div>
+              ))}
+            </div>
+          )}
           {stats && (
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {[
@@ -131,10 +141,8 @@ export function ForecastChart({ zone, compareByDefault = false }: ForecastChartP
           )}
 
           {/* Chart */}
-          {loading || !forecast ? (
-            <div className="flex h-40 items-center justify-center text-xs text-muted-foreground">
-              {loading ? 'Loading…' : 'No data'}
-            </div>
+          {!forecast ? (
+            <div className="h-40 rounded-lg bg-muted/40 animate-pulse" />
           ) : (
             <ResponsiveContainer width="100%" height={160}>
               <ComposedChart data={chartData} margin={{ top: 4, right: 12, bottom: 0, left: 0 }}>

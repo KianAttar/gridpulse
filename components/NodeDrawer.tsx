@@ -1,5 +1,6 @@
 'use client'
 
+import { X } from 'lucide-react'
 import { useNodes } from '@/hooks/useNodes'
 import { useGridZones } from '@/hooks/useGridZones'
 import { useDashboardStore } from '@/store/dashboardStore'
@@ -71,9 +72,7 @@ export function NodeDrawer() {
                 className="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
                 aria-label="Close"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+                <X size={16} />
               </button>
             </div>
 

@@ -36,7 +36,7 @@ function makeContext(overrides?: Partial<Context>): Context {
     openMeteo: {
       getForecast: vi.fn().mockResolvedValue({
         generatedAt: '2026-06-10T00:00:00.000Z',
-        points: [{ time: '2026-06-10T14:00', solarRadiation: 300, windSpeed: 20 }],
+        points: [{ time: '2026-06-10T14:00', solarRadiation: 300, windSpeed: 20, cloudCover: 10, temperature: 18 }],
       } satisfies EnergyForecast),
     } as unknown as Context['openMeteo'],
     ...overrides,

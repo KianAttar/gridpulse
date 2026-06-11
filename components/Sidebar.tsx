@@ -1,5 +1,6 @@
 'use client'
 
+import { X, Zap } from 'lucide-react'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { ZONE_IDS, ZONE_NAMES } from '@/types'
 import type { ZoneId } from '@/types'
@@ -34,18 +35,15 @@ export function Sidebar() {
       >
         <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
           <div className="flex items-center gap-2">
-            <span className="text-primary text-lg font-bold leading-none">⚡</span>
+            <Zap size={16} className="text-primary" />
             <span className="text-sm font-semibold text-foreground tracking-tight">GridPulse</span>
           </div>
-          {/* Close button — only shown on mobile where sidebar is an overlay */}
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
             aria-label="Close menu"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
+            <X size={16} />
           </button>
         </div>
 
