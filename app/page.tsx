@@ -135,7 +135,7 @@ export default function Dashboard() {
 
           {/* Forecast + routing */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <ForecastChart zone={forecastZone} />
+            <ForecastChart zone={forecastZone} compareByDefault={activeZoneFilter === null} />
             <RouteWorkloadPanel />
           </div>
         </main>

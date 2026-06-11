@@ -16,7 +16,7 @@ export class OpenMeteoAPI {
     const params = new URLSearchParams({
       latitude:      String(lat),
       longitude:     String(lon),
-      hourly:        'shortwave_radiation,wind_speed_10m',
+      hourly:        'shortwave_radiation,wind_speed_10m,cloud_cover,temperature_2m',
       forecast_days: '2',
       timezone:      'UTC',
     })
@@ -25,7 +25,7 @@ export class OpenMeteoAPI {
     if (!res.ok) throw new Error(`Open-Meteo API error: ${res.status} for zone ${zone}`)
 
     const data = await res.json()
-    const { time, shortwave_radiation, wind_speed_10m } = data.hourly
+    const { time, shortwave_radiation, wind_speed_10m, cloud_cover, temperature_2m } = data.hourly
 
     const now = Date.now()
     const points = (time as string[])
@@ -33,6 +33,8 @@ export class OpenMeteoAPI {
         time:           t,
         solarRadiation: shortwave_radiation[i] as number,
         windSpeed:      wind_speed_10m[i] as number,
+        cloudCover:     cloud_cover[i] as number,
+        temperature:    temperature_2m[i] as number,
       }))
       .filter(p => new Date(p.time).getTime() >= now)
       .slice(0, 24)

@@ -33,7 +33,9 @@ export interface GridZone {
 export interface ForecastPoint {
   time: string
   solarRadiation: number  // W/m²
-  windSpeed: number       // km/h
+  windSpeed: number       // m/s
+  cloudCover: number      // 0–100 %
+  temperature: number     // °C
 }
 
 export interface EnergyForecast {

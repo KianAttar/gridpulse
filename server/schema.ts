@@ -32,6 +32,8 @@ export const typeDefs = `#graphql
     time: String!
     solarRadiation: Float!
     windSpeed: Float!
+    cloudCover: Float!
+    temperature: Float!
   }
 
   type EnergyForecast {

@@ -32,6 +32,8 @@ export const GET_ENERGY_FORECAST = graphql(`
         time
         solarRadiation
         windSpeed
+        cloudCover
+        temperature
       }
     }
   }

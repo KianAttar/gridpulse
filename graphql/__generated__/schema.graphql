@@ -12,7 +12,9 @@ type EnergyForecast {
 }
 
 type ForecastPoint {
+  cloudCover: Float!
   solarRadiation: Float!
+  temperature: Float!
   time: String!
   windSpeed: Float!
 }

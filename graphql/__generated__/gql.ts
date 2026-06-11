@@ -16,13 +16,13 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 type Documents = {
     "\n  query GetNodes {\n    nodes {\n      id\n      name\n      status\n      powerDraw\n      zone\n    }\n  }\n": typeof types.GetNodesDocument,
     "\n  query GetGridZones {\n    gridZones {\n      id\n      name\n      carbonIntensity\n      updatedAt\n      isEstimated\n    }\n  }\n": typeof types.GetGridZonesDocument,
-    "\n  query GetEnergyForecast($zone: ZoneId!) {\n    energyForecast(zone: $zone) {\n      generatedAt\n      points {\n        time\n        solarRadiation\n        windSpeed\n      }\n    }\n  }\n": typeof types.GetEnergyForecastDocument,
+    "\n  query GetEnergyForecast($zone: ZoneId!) {\n    energyForecast(zone: $zone) {\n      generatedAt\n      points {\n        time\n        solarRadiation\n        windSpeed\n        cloudCover\n        temperature\n      }\n    }\n  }\n": typeof types.GetEnergyForecastDocument,
     "\n  query RouteWorkload($k: Int! = 3, $zones: [ZoneId!]) {\n    routeWorkload(k: $k, zones: $zones) {\n      rank\n      cost\n      reason\n      node {\n        id\n        name\n        status\n        powerDraw\n        zone\n      }\n      zone {\n        id\n        name\n        carbonIntensity\n      }\n    }\n  }\n": typeof types.RouteWorkloadDocument,
 };
 const documents: Documents = {
     "\n  query GetNodes {\n    nodes {\n      id\n      name\n      status\n      powerDraw\n      zone\n    }\n  }\n": types.GetNodesDocument,
     "\n  query GetGridZones {\n    gridZones {\n      id\n      name\n      carbonIntensity\n      updatedAt\n      isEstimated\n    }\n  }\n": types.GetGridZonesDocument,
-    "\n  query GetEnergyForecast($zone: ZoneId!) {\n    energyForecast(zone: $zone) {\n      generatedAt\n      points {\n        time\n        solarRadiation\n        windSpeed\n      }\n    }\n  }\n": types.GetEnergyForecastDocument,
+    "\n  query GetEnergyForecast($zone: ZoneId!) {\n    energyForecast(zone: $zone) {\n      generatedAt\n      points {\n        time\n        solarRadiation\n        windSpeed\n        cloudCover\n        temperature\n      }\n    }\n  }\n": types.GetEnergyForecastDocument,
     "\n  query RouteWorkload($k: Int! = 3, $zones: [ZoneId!]) {\n    routeWorkload(k: $k, zones: $zones) {\n      rank\n      cost\n      reason\n      node {\n        id\n        name\n        status\n        powerDraw\n        zone\n      }\n      zone {\n        id\n        name\n        carbonIntensity\n      }\n    }\n  }\n": types.RouteWorkloadDocument,
 };
 
@@ -51,7 +51,7 @@ export function graphql(source: "\n  query GetGridZones {\n    gridZones {\n    
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetEnergyForecast($zone: ZoneId!) {\n    energyForecast(zone: $zone) {\n      generatedAt\n      points {\n        time\n        solarRadiation\n        windSpeed\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetEnergyForecast($zone: ZoneId!) {\n    energyForecast(zone: $zone) {\n      generatedAt\n      points {\n        time\n        solarRadiation\n        windSpeed\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query GetEnergyForecast($zone: ZoneId!) {\n    energyForecast(zone: $zone) {\n      generatedAt\n      points {\n        time\n        solarRadiation\n        windSpeed\n        cloudCover\n        temperature\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetEnergyForecast($zone: ZoneId!) {\n    energyForecast(zone: $zone) {\n      generatedAt\n      points {\n        time\n        solarRadiation\n        windSpeed\n        cloudCover\n        temperature\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
