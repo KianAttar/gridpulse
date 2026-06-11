@@ -17,14 +17,14 @@ import { NodeDrawer } from "@/components/NodeDrawer";
 export default function Dashboard() {
   const [canRefresh, setCanRefresh] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { nodes, loading: nodesLoading } = useNodes();
-  const { zones, loading: zonesLoading, lastUpdatedAt, refetch } = useGridZones();
+  const { nodes, loading: nodesLoading, refetch: refetchNodes } = useNodes();
+  const { zones, loading: zonesLoading, lastUpdatedAt, refetch: refetchZones } = useGridZones();
 
   async function handleRefresh() {
     if (!canRefresh || zonesLoading) return;
     setCanRefresh(false);
     setIsRefreshing(true);
-    await refetch();
+    await Promise.all([refetchZones(), refetchNodes()]);
     setIsRefreshing(false);
     setTimeout(() => setCanRefresh(true), 15_000);
   }
