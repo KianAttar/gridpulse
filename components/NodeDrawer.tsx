@@ -49,7 +49,7 @@ export function NodeDrawer() {
 
       {/* Drawer */}
       <aside
-        className={`fixed right-0 top-0 z-50 flex h-full w-96 flex-col border-l border-border bg-sidebar
+        className={`fixed right-0 top-0 z-50 flex h-full w-full sm:w-96 flex-col border-l border-border bg-sidebar
           transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >

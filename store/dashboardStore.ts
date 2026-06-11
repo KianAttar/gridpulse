@@ -14,7 +14,7 @@ interface DashboardState {
 export const useDashboardStore = create<DashboardState>((set) => ({
   selectedNodeId: null,
   activeZoneFilter: null,
-  sidebarOpen: true,
+  sidebarOpen: false,
 
   setSelectedNodeId: (id) => set({ selectedNodeId: id }),
   setActiveZoneFilter: (zone) => set({ activeZoneFilter: zone }),

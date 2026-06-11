@@ -19,6 +19,7 @@ export default function Dashboard() {
     setActiveZoneFilter,
     selectedNodeId,
     setSelectedNodeId,
+    setSidebarOpen,
   } = useDashboardStore();
 
   const filteredNodes = activeZoneFilter
@@ -34,30 +35,42 @@ export default function Dashboard() {
 
       <div className="flex flex-1 flex-col overflow-auto">
         {/* Header */}
-        <header className="flex h-14 items-center justify-between border-b border-border px-6 shrink-0">
-          <div>
-            <span className="text-sm font-semibold text-foreground">
-              Dashboard
-            </span>
-            {activeZoneFilter && (
-              <span className="ml-2 text-sm text-muted-foreground">
-                · {ZONE_NAMES[activeZoneFilter]}
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            {/* Hamburger — visible on < lg where sidebar is hidden by default */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+              aria-label="Open menu"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
+            <div>
+              <span className="text-sm font-semibold text-foreground">
+                Dashboard
               </span>
-            )}
+              {activeZoneFilter && (
+                <span className="ml-2 text-sm text-muted-foreground">
+                  · {ZONE_NAMES[activeZoneFilter]}
+                </span>
+              )}
+            </div>
           </div>
-          <span className="text-xs text-muted-foreground">
+          <span className="hidden sm:block text-xs text-muted-foreground">
             Zones poll every 60s
           </span>
         </header>
 
-        <main className="flex-1 space-y-6 p-6">
+        <main className="flex-1 space-y-6 p-4 sm:p-6">
           {/* Zone cards */}
           <section>
             <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Grid Zones
             </h2>
             {zonesLoading ? (
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div
                     key={i}
@@ -66,7 +79,7 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
                 {zones.map((zone) => (
                   <ZoneCard
                     key={zone.id}
@@ -94,7 +107,7 @@ export default function Dashboard() {
               )}
             </h2>
             {nodesLoading ? (
-              <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div
                     key={i}
@@ -103,7 +116,7 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {filteredNodes.map((node) => (
                   <NodeCard
                     key={node.id}
@@ -121,7 +134,7 @@ export default function Dashboard() {
           </section>
 
           {/* Forecast + routing */}
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <ForecastChart zone={forecastZone} />
             <RouteWorkloadPanel />
           </div>

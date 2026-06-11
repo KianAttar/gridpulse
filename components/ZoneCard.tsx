@@ -31,19 +31,19 @@ export function ZoneCard({ name, carbonIntensity, isEstimated, isActive, onClick
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col gap-2 rounded-lg border p-4 text-left transition-all w-full cursor-pointer
+      className={`flex flex-col gap-1.5 sm:gap-2 rounded-lg border p-3 sm:p-4 text-left transition-all w-full cursor-pointer
         ${isActive
           ? 'border-primary/60 bg-card shadow-[0_0_0_1px_rgba(255,185,116,0.15)]'
           : 'border-border bg-card hover:border-border/80 hover:bg-muted/60'
         }`}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-foreground">{name}</span>
-        {isActive && <span className="text-[10px] font-medium text-primary uppercase tracking-wider">active</span>}
+      <div className="flex items-start justify-between gap-1">
+        <span className="text-xs sm:text-sm font-medium text-foreground leading-tight">{name}</span>
+        {isActive && <span className="shrink-0 text-[9px] sm:text-[10px] font-medium text-primary uppercase tracking-wider mt-0.5">active</span>}
       </div>
-      <div className={`text-2xl font-bold font-mono leading-none ${value}`}>
+      <div className={`text-xl sm:text-2xl font-bold font-mono leading-none ${value}`}>
         {carbonIntensity}
-        <span className="text-xs font-normal text-muted-foreground ml-1.5">gCO₂/kWh</span>
+        <span className="text-[10px] sm:text-xs font-normal text-muted-foreground ml-1">gCO₂/kWh</span>
       </div>
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />

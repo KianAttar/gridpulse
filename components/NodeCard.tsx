@@ -50,7 +50,7 @@ export const NodeCard = memo(function NodeCard({
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col gap-3 rounded-lg border p-4 text-left transition-all w-full cursor-pointer
+      className={`flex flex-col gap-2 sm:gap-3 rounded-lg border p-3 sm:p-4 text-left transition-all w-full cursor-pointer
         ${
           isSelected
             ? "border-primary/60 bg-card shadow-[0_0_0_1px_rgba(255,185,116,0.15)]"
