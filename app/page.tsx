@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Menu, RefreshCw } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNodes } from "@/hooks/useNodes";
 import { useGridZones } from "@/hooks/useGridZones";
 import { useDashboardStore } from "@/store/dashboardStore";
-import { ZONE_NAMES } from "@/types";
+import { ZONE_NAMES, type ZoneId } from "@/types";
 import { ZoneCard } from "@/components/ZoneCard";
 import { NodeCard } from "@/components/NodeCard";
 import { ForecastChart } from "@/components/ForecastChart";
@@ -35,6 +35,14 @@ export default function Dashboard() {
     setSelectedNodeId,
     setSidebarOpen,
   } = useDashboardStore();
+
+  const handleZoneClick = useCallback((id: string) => {
+    setActiveZoneFilter(activeZoneFilter === id ? null : id as ZoneId)
+  }, [activeZoneFilter, setActiveZoneFilter])
+
+  const handleNodeClick = useCallback((id: string) => {
+    setSelectedNodeId(selectedNodeId === id ? null : id)
+  }, [selectedNodeId, setSelectedNodeId])
 
   const filteredNodes = activeZoneFilter
     ? nodes.filter((n) => n.zone === activeZoneFilter)
@@ -131,11 +139,7 @@ export default function Dashboard() {
                     key={zone.id}
                     {...zone}
                     isActive={activeZoneFilter === zone.id}
-                    onClick={() =>
-                      setActiveZoneFilter(
-                        activeZoneFilter === zone.id ? null : zone.id,
-                      )
-                    }
+                    onClick={handleZoneClick}
                   />
                 ))}
               </div>
@@ -174,11 +178,7 @@ export default function Dashboard() {
                     key={node.id}
                     {...node}
                     isSelected={selectedNodeId === node.id}
-                    onClick={() =>
-                      setSelectedNodeId(
-                        selectedNodeId === node.id ? null : node.id,
-                      )
-                    }
+                    onClick={handleNodeClick}
                   />
                 ))}
               </div>

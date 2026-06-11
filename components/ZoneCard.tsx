@@ -1,5 +1,8 @@
 'use client'
 
+import { memo } from 'react'
+import type { ZoneId } from '@/types'
+
 type Intensity = 'low' | 'medium' | 'high'
 
 function getIntensity(v: number): Intensity {
@@ -15,22 +18,22 @@ const intensityConfig: Record<Intensity, { value: string; label: string; dot: st
 }
 
 interface ZoneCardProps {
-  id: string
+  id: ZoneId
   name: string
   carbonIntensity: number
   updatedAt: string
   isEstimated: boolean
   isActive: boolean
-  onClick: () => void
+  onClick: (id: ZoneId) => void
 }
 
-export function ZoneCard({ name, carbonIntensity, isEstimated, isActive, onClick }: ZoneCardProps) {
+export const ZoneCard = memo(function ZoneCard({ id, name, carbonIntensity, isEstimated, isActive, onClick }: ZoneCardProps) {
   const level = getIntensity(carbonIntensity)
   const { value, label, dot } = intensityConfig[level]
 
   return (
     <button
-      onClick={onClick}
+      onClick={() => onClick(id)}
       className={`flex flex-col gap-1.5 sm:gap-2 rounded-lg border p-3 sm:p-4 text-left transition-all w-full cursor-pointer
         ${isActive
           ? 'border-primary/60 bg-card shadow-[0_0_0_1px_rgba(255,185,116,0.15)]'
@@ -52,4 +55,4 @@ export function ZoneCard({ name, carbonIntensity, isEstimated, isActive, onClick
       </div>
     </button>
   )
-}
+})

@@ -34,10 +34,11 @@ interface NodeCardProps {
   powerDraw: number;
   zone: ZoneId;
   isSelected: boolean;
-  onClick: () => void;
+  onClick: (id: string) => void;
 }
 
 export const NodeCard = memo(function NodeCard({
+  id,
   name,
   status,
   powerDraw,
@@ -49,7 +50,7 @@ export const NodeCard = memo(function NodeCard({
 
   return (
     <button
-      onClick={onClick}
+      onClick={() => onClick(id)}
       className={`flex flex-col gap-2 sm:gap-3 rounded-lg border p-3 sm:p-4 text-left transition-all w-full cursor-pointer
         ${
           isSelected
