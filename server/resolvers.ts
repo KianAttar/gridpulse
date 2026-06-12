@@ -59,6 +59,10 @@ export const resolvers = {
         .map(calcPowerDrawPct)
         .slice(offset, limit ? limit + offset : undefined);
     },
+    node: (_: unknown, args: { id: string }) => {
+      const node = NODES.find((n) => n.id === args.id);
+      return node ? calcPowerDrawPct(node) : undefined;
+    },
 
     gridZones: async (_: unknown, __: unknown, context: Context) => {
       return Promise.all(context.electricityMaps.getAllZones());
