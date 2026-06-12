@@ -9,32 +9,41 @@ export interface Context {
 }
 
 // Reference max for utilization penalty — nodes above this are penalized proportionally.
-const MAX_POWER_W = 600
+const MAX_POWER_W = 600;
 
 interface ScoredNode {
-  node: ComputeNode
-  zone: GridZone
-  cost: number
+  node: ComputeNode;
+  zone: GridZone;
+  cost: number;
 }
 
 function scoreNode(node: ComputeNode, zone: GridZone): number {
-  const statusPenalty = node.status === 'IDLE' ? 15 : 0
-  const utilizationPenalty = (node.powerDraw / MAX_POWER_W) * 30
-  return zone.carbonIntensity + statusPenalty + utilizationPenalty
+  const statusPenalty = node.status === "IDLE" ? 15 : 0;
+  const utilizationPenalty = (node.powerDraw / MAX_POWER_W) * 30;
+  return zone.carbonIntensity + statusPenalty + utilizationPenalty;
 }
 
 function buildReason(node: ComputeNode, zone: GridZone, cost: number): string {
-  const parts = [`${zone.name} · ${zone.carbonIntensity} gCO₂/kWh`]
-  if (node.status === 'IDLE') parts.push('idle node (+15 spin-up)')
-  const util = Math.round((node.powerDraw / MAX_POWER_W) * 100)
-  if (util > 50) parts.push(`${util}% utilization`)
-  parts.push(`cost ${Math.round(cost * 10) / 10}`)
-  return parts.join(' · ')
+  const parts = [`${zone.name} · ${zone.carbonIntensity} gCO₂/kWh`];
+  if (node.status === "IDLE") parts.push("idle node (+15 spin-up)");
+  const util = Math.round((node.powerDraw / MAX_POWER_W) * 100);
+  if (util > 50) parts.push(`${util}% utilization`);
+  parts.push(`cost ${Math.round(cost * 10) / 10}`);
+  return parts.join(" · ");
+}
+
+function calcPowerDrawPct(
+  nodes: ComputeNode[],
+): (ComputeNode & { powerDrawPct: number })[] {
+  return nodes.map((node) => ({
+    ...node,
+    powerDrawPct: Math.round((node.powerDraw / MAX_POWER_W) * 10000) / 10000,
+  }));
 }
 
 export const resolvers = {
   Query: {
-    nodes: () => NODES,
+    nodes: () => calcPowerDrawPct(NODES),
 
     gridZones: async (_: unknown, __: unknown, context: Context) => {
       return Promise.all(context.electricityMaps.getAllZones());
@@ -54,34 +63,34 @@ export const resolvers = {
       args: { k: number; zones?: ZoneId[] },
       context: Context,
     ) => {
-      const allZones = await Promise.all(context.electricityMaps.getAllZones())
-      const zoneMap = new Map(allZones.map(z => [z.id, z]))
+      const allZones = await Promise.all(context.electricityMaps.getAllZones());
+      const zoneMap = new Map(allZones.map((z) => [z.id, z]));
 
       const targetIds = args.zones?.length
         ? args.zones
-        : (Array.from(zoneMap.keys()) as ZoneId[])
+        : (Array.from(zoneMap.keys()) as ZoneId[]);
 
       const available = NODES.filter(
-        n => n.status !== 'OFFLINE' && targetIds.includes(n.zone)
-      )
+        (n) => n.status !== "OFFLINE" && targetIds.includes(n.zone),
+      );
 
-      if (available.length === 0) return []
+      if (available.length === 0) return [];
 
-      const scored: ScoredNode[] = available.map(node => ({
+      const scored: ScoredNode[] = available.map((node) => ({
         node,
         zone: zoneMap.get(node.zone)!,
         cost: scoreNode(node, zoneMap.get(node.zone)!),
-      }))
+      }));
 
-      scored.sort((a, b) => a.cost - b.cost)
+      scored.sort((a, b) => a.cost - b.cost);
 
       return scored.slice(0, args.k).map(({ node, zone, cost }, i) => ({
-        node,
+        node: calcPowerDrawPct([node])[0],
         zone,
         cost: Math.round(cost * 10) / 10,
         rank: i + 1,
         reason: buildReason(node, zone, cost),
-      }))
+      }));
     },
   },
 };

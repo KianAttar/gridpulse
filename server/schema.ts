@@ -17,6 +17,7 @@ export const typeDefs = `#graphql
     name: String!
     status: NodeStatus!
     powerDraw: Float!
+    powerDrawPct: Float!
     zone: ZoneId!
   }
 
