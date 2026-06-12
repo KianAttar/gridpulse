@@ -43,7 +43,11 @@ function calcPowerDrawPct(
 
 export const resolvers = {
   Query: {
-    nodes: () => calcPowerDrawPct(NODES),
+    nodes: (
+      _: unknown,
+      { limit, offset = 0 }: { limit?: number; offset?: number },
+    ) =>
+      calcPowerDrawPct(NODES).slice(offset, limit ? limit + offset : undefined),
 
     gridZones: async (_: unknown, __: unknown, context: Context) => {
       return Promise.all(context.electricityMaps.getAllZones());

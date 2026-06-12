@@ -51,7 +51,7 @@ export const typeDefs = `#graphql
   }
 
   type Query {
-    nodes: [ComputeNode!]!
+    nodes(limit: Int, offset: Int): [ComputeNode!]!
     gridZones: [GridZone!]!
     energyForecast(zone: ZoneId!): EnergyForecast!
     routeWorkload(k: Int! = 3, zones: [ZoneId!]): [WorkloadRecommendation!]!
