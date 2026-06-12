@@ -7,12 +7,13 @@ import { startSimulation } from '@/server/simulation'
 
 startSimulation()
 
+const electricityMaps = new ElectricityMapsAPI()
+const openMeteo = new OpenMeteoAPI()
+
 const server = new ApolloServer<Context>({ typeDefs, resolvers })
-const serverStart = server.start()
+await server.start()
 
 export async function POST(request: Request) {
-  await serverStart
-
   const body = await request.json()
 
   const result = await server.executeOperation(
@@ -22,10 +23,7 @@ export async function POST(request: Request) {
       operationName: body.operationName ?? undefined,
     },
     {
-      contextValue: {
-        electricityMaps: new ElectricityMapsAPI(),
-        openMeteo: new OpenMeteoAPI(),
-      },
+      contextValue: { electricityMaps, openMeteo },
     }
   )
 
