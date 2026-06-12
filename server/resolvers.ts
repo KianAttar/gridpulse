@@ -1,4 +1,4 @@
-import type { ZoneId, ComputeNode, GridZone } from "@/types";
+import type { ZoneId, ComputeNode, GridZone, NodeStatus } from "@/types";
 import { ElectricityMapsAPI } from "./datasources/ElectricityMapsAPI";
 import { OpenMeteoAPI } from "./datasources/OpenMeteoAPI";
 import { NODES } from "./nodes";
@@ -33,21 +33,32 @@ function buildReason(node: ComputeNode, zone: GridZone, cost: number): string {
 }
 
 function calcPowerDrawPct(
-  nodes: ComputeNode[],
-): (ComputeNode & { powerDrawPct: number })[] {
-  return nodes.map((node) => ({
+  node: ComputeNode,
+): ComputeNode & { powerDrawPct: number } {
+  return {
     ...node,
     powerDrawPct: Math.round((node.powerDraw / MAX_POWER_W) * 10000) / 10000,
-  }));
+  };
 }
 
 export const resolvers = {
   Query: {
     nodes: (
       _: unknown,
-      { limit, offset = 0 }: { limit?: number; offset?: number },
-    ) =>
-      calcPowerDrawPct(NODES).slice(offset, limit ? limit + offset : undefined),
+      {
+        limit,
+        offset = 0,
+        status: nodeStatus,
+      }: { limit?: number; offset?: number; status?: NodeStatus },
+    ) => {
+      let nodes = NODES;
+      if (nodeStatus) {
+        nodes = nodes.filter((n) => n.status === nodeStatus);
+      }
+      return nodes
+        .map(calcPowerDrawPct)
+        .slice(offset, limit ? limit + offset : undefined);
+    },
 
     gridZones: async (_: unknown, __: unknown, context: Context) => {
       return Promise.all(context.electricityMaps.getAllZones());
@@ -89,7 +100,7 @@ export const resolvers = {
       scored.sort((a, b) => a.cost - b.cost);
 
       return scored.slice(0, args.k).map(({ node, zone, cost }, i) => ({
-        node: calcPowerDrawPct([node])[0],
+        node: calcPowerDrawPct(node),
         zone,
         cost: Math.round(cost * 10) / 10,
         rank: i + 1,
