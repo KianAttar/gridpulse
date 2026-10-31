@@ -2,6 +2,7 @@ type ComputeNode {
   id: ID!
   name: String!
   powerDraw: Float!
+  powerDrawPct: Float!
   status: NodeStatus!
   zone: ZoneId!
 }
@@ -36,7 +37,8 @@ enum NodeStatus {
 type Query {
   energyForecast(zone: ZoneId!): EnergyForecast!
   gridZones: [GridZone!]!
-  nodes: [ComputeNode!]!
+  node(id: ID): ComputeNode
+  nodes(limit: Int, offset: Int, status: NodeStatus): [ComputeNode!]!
   routeWorkload(k: Int! = 3, zones: [ZoneId!]): [WorkloadRecommendation!]!
 }
 
